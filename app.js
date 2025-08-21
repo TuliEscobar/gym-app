@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
-    const userSelection = document.getElementById('user-selection');
     const userForm = document.getElementById('user-form');
     const newUsernameInput = document.getElementById('new-username-input');
     const userDropdown = document.getElementById('user-dropdown');
@@ -16,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const weightInput = document.getElementById('weight-input');
     const setsInput = document.getElementById('sets-input');
     const repsInput = document.getElementById('reps-input');
+    const exerciseImageInput = document.getElementById('exercise-image-input');
     const backToMuscleGroupsBtn = document.getElementById('back-to-muscle-groups');
     const editModal = document.getElementById('edit-modal');
     const editExerciseForm = document.getElementById('edit-exercise-form');
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const editWeightInput = document.getElementById('edit-weight-input');
     const editSetsInput = document.getElementById('edit-sets-input');
     const editRepsInput = document.getElementById('edit-reps-input');
+    const editExerciseImageInput = document.getElementById('edit-exercise-image-input');
     const cancelEditBtn = document.getElementById('cancel-edit');
 
     // App State
@@ -32,12 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Data Functions
     function saveData() {
-        localStorage.setItem('gymAppData', JSON.stringify(appData));
+        try {
+            localStorage.setItem('gymAppData', JSON.stringify(appData));
+        } catch (e) {
+            console.error("Error saving to localStorage:", e);
+            alert("Error: Could not save data. The storage may be full.");
+        }
     }
 
     // User Functions
     function renderUsers() {
-        userDropdown.innerHTML = '<option value="">Select User</option>';
+        userDropdown.innerHTML = '<option value="">Seleccionar Usuario</option>';
         for (const username in appData.users) {
             const option = document.createElement('option');
             option.value = username;
@@ -45,12 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
             userDropdown.appendChild(option);
         }
         userDropdown.value = appData.currentUser;
-        if (appData.currentUser) {
-            muscleGroupSection.style.display = 'block';
-            renderMuscleGroups();
-        } else {
-            muscleGroupSection.style.display = 'none';
-        }
+        muscleGroupSection.style.display = appData.currentUser ? 'block' : 'none';
+        if (appData.currentUser) renderMuscleGroups();
     }
 
     function addUser(username) {
@@ -81,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li');
             li.textContent = mg.name;
             li.dataset.id = mg.id;
-
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Delete';
             deleteBtn.classList.add('delete-btn');
@@ -89,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 deleteMuscleGroup(mg.id);
             });
-
             li.appendChild(deleteBtn);
             li.addEventListener('click', () => showExercisesView(mg.id));
             muscleGroupList.appendChild(li);
@@ -121,25 +121,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         muscleGroup.exercises.forEach(exercise => {
             const li = document.createElement('li');
+            const imageHTML = exercise.imageDataURL ? `<img src="${exercise.imageDataURL}" alt="${exercise.name}" class="exercise-img">` : '';
             li.innerHTML = `
-                <span>${exercise.name} - ${exercise.weight}kg, ${exercise.sets} sets, ${exercise.reps} reps</span>
-                <div>
+                <div class="exercise-info">
+                    ${imageHTML}
+                    <span>${exercise.name} - ${exercise.weight}kg, ${exercise.sets} sets, ${exercise.reps} reps</span>
+                </div>
+                <div class="exercise-actions">
                     <button class="edit-btn" data-id="${exercise.id}">Edit</button>
                     <button class="delete-btn" data-id="${exercise.id}">Delete</button>
                 </div>
             `;
-
             li.querySelector('.edit-btn').addEventListener('click', () => openEditModal(exercise.id));
             li.querySelector('.delete-btn').addEventListener('click', () => deleteExercise(exercise.id));
-
             exerciseList.appendChild(li);
         });
     }
 
-    function addExercise(name, weight, sets, reps) {
+    async function addExercise(name, weight, sets, reps, imageFile) {
         if (!appData.currentUser || !currentMuscleGroupId) return;
+        let imageDataURL = null;
+        if (imageFile) {
+            imageDataURL = await readFileAsDataURL(imageFile);
+        }
+        const newExercise = { id: Date.now(), name, weight, sets, reps, imageDataURL };
         const muscleGroup = appData.users[appData.currentUser].muscleGroups.find(mg => mg.id === currentMuscleGroupId);
-        const newExercise = { id: Date.now(), name, weight, sets, reps };
         muscleGroup.exercises.push(newExercise);
         saveData();
         renderExercises();
@@ -153,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderExercises();
     }
 
-    function updateExercise(id, name, weight, sets, reps) {
+    async function updateExercise(id, name, weight, sets, reps, imageFile) {
         if (!appData.currentUser || !currentMuscleGroupId) return;
         const muscleGroup = appData.users[appData.currentUser].muscleGroups.find(mg => mg.id === currentMuscleGroupId);
         const exercise = muscleGroup.exercises.find(ex => ex.id === id);
@@ -162,10 +168,22 @@ document.addEventListener('DOMContentLoaded', () => {
             exercise.weight = weight;
             exercise.sets = sets;
             exercise.reps = reps;
+            if (imageFile) {
+                exercise.imageDataURL = await readFileAsDataURL(imageFile);
+            }
             saveData();
             renderExercises();
             closeEditModal();
         }
+    }
+
+    function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
     }
 
     // View Management
@@ -173,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         muscleGroupSection.style.display = appData.currentUser ? 'block' : 'none';
         exercisesSection.style.display = 'none';
         currentMuscleGroupId = null;
-        if(appData.currentUser) renderMuscleGroups();
+        if (appData.currentUser) renderMuscleGroups();
     }
 
     function showExercisesView(id) {
@@ -195,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editWeightInput.value = exercise.weight;
             editSetsInput.value = exercise.sets;
             editRepsInput.value = exercise.reps;
+            editExerciseImageInput.value = ''; // Clear previous file selection
             editModal.style.display = 'flex';
         }
     }
@@ -208,10 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = newUsernameInput.value.trim();
-        if (username) {
-            addUser(username);
-            newUsernameInput.value = '';
-        }
+        if (username) addUser(username);
     });
 
     userDropdown.addEventListener('change', (e) => {
@@ -234,35 +250,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    addExerciseForm.addEventListener('submit', (e) => {
+    addExerciseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = exerciseNameInput.value.trim();
         const weight = weightInput.value.trim();
         const sets = setsInput.value.trim();
         const reps = repsInput.value.trim();
+        const imageFile = exerciseImageInput.files[0];
         if (name && weight && sets && reps) {
-            addExercise(name, weight, sets, reps);
+            await addExercise(name, weight, sets, reps, imageFile);
             addExerciseForm.reset();
         }
     });
 
-    editExerciseForm.addEventListener('submit', (e) => {
+    editExerciseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = editExerciseNameInput.value.trim();
         const weight = editWeightInput.value.trim();
         const sets = editSetsInput.value.trim();
         const reps = editRepsInput.value.trim();
+        const imageFile = editExerciseImageInput.files[0];
         if (name && weight && sets && reps && editingExerciseId) {
-            updateExercise(editingExerciseId, name, weight, sets, reps);
+            await updateExercise(editingExerciseId, name, weight, sets, reps, imageFile);
         }
     });
 
     backToMuscleGroupsBtn.addEventListener('click', showMuscleGroupsView);
     cancelEditBtn.addEventListener('click', closeEditModal);
     editModal.addEventListener('click', (e) => {
-        if (e.target === editModal) {
-            closeEditModal();
-        }
+        if (e.target === editModal) closeEditModal();
     });
 
     // Initial Render

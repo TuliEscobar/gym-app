@@ -54,7 +54,7 @@ h1 {
     gap: 10px;
 }
 
-input[type="text"], input[type="number"], select {
+input[type="text"], input[type="number"], select, input[type="file"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -106,6 +106,22 @@ li {
     justify-content: space-between;
     align-items: center;
     transition: transform 0.2s ease;
+    gap: 15px;
+}
+
+.exercise-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1;
+}
+
+.exercise-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+    background-color: #ccc;
 }
 
 li:hover {
