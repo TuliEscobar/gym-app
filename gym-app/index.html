@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Routine App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Gym Routine App</h1>
+
+        <div id="routines">
+            <h2>My Routines</h2>
+            <ul id="routine-list"></ul>
+
+            <form id="add-routine-form">
+                <input type="text" id="routine-name-input" placeholder="New Routine Name" required>
+                <button type="submit">Add Routine</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div id="exercises" style="display: none;">
+            <h2 id="current-routine-name"></h2>
+            <ul id="exercise-list"></ul>
+
+            <form id="add-exercise-form">
+                <input type="text" id="exercise-name-input" placeholder="Exercise Name" required>
+                <input type="number" id="weight-input" placeholder="Weight (kg)" required>
+                <input type="number" id="sets-input" placeholder="Sets" required>
+                <input type="number" id="reps-input" placeholder="Reps" required>
+                <button type="submit">Add Exercise</button>
+            </form>
+             <button id="back-to-routines">Back to Routines</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
