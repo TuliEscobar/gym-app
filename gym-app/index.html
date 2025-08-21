@@ -1,39 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gym Routine App</title>
+    <title>App de Rutinas de Gimnasio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
-        <h1>Gym Routine App</h1>
+        <header>
+            <h1>App de Rutinas de Gimnasio</h1>
+            <div id="user-management">
+                <form id="user-form">
+                    <input type="text" id="new-username-input" placeholder="Ingresa nuevo usuario" required>
+                    <button type="submit">Crear Usuario</button>
+                </form>
+                <select id="user-dropdown">
+                    <option value="">Seleccionar Usuario</option>
+                </select>
+            </div>
+        </header>
 
-        <div id="routines">
-            <h2>My Routines</h2>
-            <ul id="routine-list"></ul>
+        <main>
+            <div id="muscle-group-section" style="display: none;">
+                <h2>Mis Grupos Musculares</h2>
+                <ul id="muscle-group-list"></ul>
+                <form id="add-muscle-group-form">
+                    <input type="text" id="muscle-group-name-input" placeholder="Nombre del Grupo Muscular" required>
+                    <button type="submit">Agregar Grupo</button>
+                </form>
+            </div>
 
-            <form id="add-routine-form">
-                <input type="text" id="routine-name-input" placeholder="New Routine Name" required>
-                <button type="submit">Add Routine</button>
+            <div id="exercises" style="display: none;">
+                <button id="back-to-muscle-groups">&larr; Volver a Grupos Musculares</button>
+                <h2 id="current-muscle-group-name"></h2>
+                <ul id="exercise-list"></ul>
+                <form id="add-exercise-form">
+                    <input type="text" id="exercise-name-input" placeholder="Nombre del Ejercicio" required>
+                    <input type="number" id="weight-input" placeholder="Peso (kg)" required>
+                    <input type="number" id="sets-input" placeholder="Series" required>
+                    <input type="number" id="reps-input" placeholder="Repeticiones" required>
+                    <button type="submit">Agregar Ejercicio</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="edit-modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Editar Ejercicio</h3>
+            <form id="edit-exercise-form">
+                <label for="edit-exercise-name-input">Nombre del Ejercicio</label>
+                <input type="text" id="edit-exercise-name-input" required>
+
+                <label for="edit-weight-input">Peso (kg)</label>
+                <input type="number" id="edit-weight-input" required>
+
+                <label for="edit-sets-input">Series</label>
+                <input type="number" id="edit-sets-input" required>
+
+                <label for="edit-reps-input">Repeticiones</label>
+                <input type="number" id="edit-reps-input" required>
+
+                <div class="modal-actions">
+                    <button type="submit">Guardar Cambios</button>
+                    <button type="button" id="cancel-edit">Cancelar</button>
+                </div>
             </form>
-        </div>
-
-        <hr>
-
-        <div id="exercises" style="display: none;">
-            <h2 id="current-routine-name"></h2>
-            <ul id="exercise-list"></ul>
-
-            <form id="add-exercise-form">
-                <input type="text" id="exercise-name-input" placeholder="Exercise Name" required>
-                <input type="number" id="weight-input" placeholder="Weight (kg)" required>
-                <input type="number" id="sets-input" placeholder="Sets" required>
-                <input type="number" id="reps-input" placeholder="Reps" required>
-                <button type="submit">Add Exercise</button>
-            </form>
-             <button id="back-to-routines">Back to Routines</button>
         </div>
     </div>
 

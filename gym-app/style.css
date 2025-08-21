@@ -1,22 +1,95 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-color: #f4f7f6;
+    --surface-color: #ffffff;
+    --text-color: #333333;
+    --danger-color: #e74c3c;
+    --light-gray-color: #ecf0f1;
+    --dark-gray-color: #7f8c8d;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.6;
-    background: #f4f4f4;
-    color: #333;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
     padding: 20px;
 }
 
 #app {
-    max-width: 600px;
+    max-width: 800px;
     margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: var(--surface-color);
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-h1, h2 {
+header {
+    border-bottom: 2px solid var(--light-gray-color);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+h1, h2, h3 {
     text-align: center;
+    color: var(--primary-color);
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+#user-management {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+#user-form, #add-muscle-group-form {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"], input[type="number"], select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    flex: 1;
+}
+
+button, .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+#add-exercise-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#add-exercise-form button {
+    background-color: var(--secondary-color);
+}
+
+#add-exercise-form button:hover {
+    background-color: #27ae60;
 }
 
 ul {
@@ -25,67 +98,119 @@ ul {
 }
 
 li {
-    background: #f9f9f9;
-    padding: 10px;
-    margin-bottom: 5px;
-    border-radius: 3px;
+    background: var(--light-gray-color);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: transform 0.2s ease;
 }
 
-form {
-    display: flex;
-    margin-top: 20px;
+li:hover {
+    transform: translateY(-2px);
 }
 
-input[type="text"], input[type="number"] {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-}
-
-button {
-    padding: 10px 15px;
-    border: none;
-    background: #333;
-    color: #fff;
-    border-radius: 3px;
-    cursor: pointer;
+.delete-btn, .edit-btn {
     margin-left: 10px;
-}
-
-button:hover {
-    background: #555;
-}
-
-#add-exercise-form {
-    flex-direction: column;
-}
-
-#add-exercise-form input {
-    margin-bottom: 10px;
-}
-
-#add-exercise-form button {
-    margin-left: 0;
-}
-
-#back-to-routines {
-    margin-top: 10px;
-    background: #777;
-}
-
-#back-to-routines:hover {
-    background: #999;
+    padding: 5px 10px;
+    font-size: 14px;
 }
 
 .delete-btn {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
+    background-color: var(--danger-color);
+}
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.edit-btn {
+    background-color: var(--dark-gray-color);
+}
+.edit-btn:hover {
+    background-color: #95a5a6;
+}
+
+#back-to-muscle-groups {
+    background: var(--dark-gray-color);
+    margin-bottom: 20px;
+}
+
+/* Modal Styles */
+#edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--surface-color);
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+#edit-exercise-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#edit-exercise-form label {
+    font-weight: bold;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#cancel-edit {
+    background-color: var(--dark-gray-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #app {
+        padding: 20px;
+    }
+    #user-management {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    #app {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    #user-form, #add-muscle-group-form {
+        flex-direction: column;
+    }
+    li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    li div {
+        align-self: flex-end;
+    }
 }
